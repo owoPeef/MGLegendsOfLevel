@@ -1,0 +1,15 @@
+name: MGLegendsOfLevel
+version: '${version}'
+main: ru.peef.mglegendsoflevel.LegendsOfLevelMain
+api-version: '1.19'
+depend: [ChilovePlugin, PlaceholderAPI, ProtocolLib]
+author: Peef
+website: www.github.com/owoPeef/MGLegendsOfLevel
+commands:
+  legendsoflevel:
+    description: Legends of Level manager command.
+    usage: /<command>
+    aliases: [lol]
+permissions:
+  legendsoflevel.commands.menu:
+    default: not op
