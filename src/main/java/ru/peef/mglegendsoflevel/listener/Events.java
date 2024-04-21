@@ -96,7 +96,7 @@ public class Events implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         GamePlayer gamePlayer = LegendsOfLevelMain.getGame().getGamePlayer(event.getPlayer());
-        event.setRespawnLocation(gamePlayer.getLastLocation());
+        event.setRespawnLocation(LegendsOfLevelMain.spawnLocation);
     }
 
     @EventHandler

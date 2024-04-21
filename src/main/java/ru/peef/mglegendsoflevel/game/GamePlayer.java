@@ -25,7 +25,6 @@ public class GamePlayer {
     private Player player;
     private boolean waveAccepted = false;
     private boolean onWave = false;
-    private Location lastLocation = LegendsOfLevelMain.getSpawnLocation();
     private GameCharacter character = null;
     private boolean isBeginner = false;
 
@@ -67,7 +66,7 @@ public class GamePlayer {
 
     public void death() {
         sendTitle("&c&lТы умер!", "", 3, 6, 3);
-        getPlayer().teleport(getLastLocation());
+        getPlayer().teleport(LegendsOfLevelMain.spawnLocation);
         addCoins(getRewardCoins() / 2);
         setRewardCoins(0);
         setOnWave(false);
@@ -84,8 +83,6 @@ public class GamePlayer {
     public Game getGame() { return LegendsOfLevelMain.getGame(); }
     public void sendTitle(String title, String subtitle, int fadeIn, int staySeconds, int fadeOut) { player.sendTitle(Utils.format(title), Utils.format(subtitle), fadeIn, staySeconds * 20, fadeOut); }
     public void sendMessage(String message) { player.sendMessage(Utils.format(message)); }
-    public Location getLastLocation() { return this.lastLocation; }
-    public void setLastLocation(Location location) { this.lastLocation = location; }
     public World getWorld() { return this.player.getWorld(); }
     public boolean onWave() { return this.onWave; }
     public void setOnWave(boolean isAccepted) { this.onWave = isAccepted; }

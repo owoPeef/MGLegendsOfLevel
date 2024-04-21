@@ -45,7 +45,7 @@ public final class LegendsOfLevelMain extends JavaPlugin {
         game = new Game();
         LevelManager.loadLevels();
 
-        spawnLocation = new Location(game.getWorld(), -7.00f, -59f, -36.5f);
+        spawnLocation = game.getWorld().getSpawnLocation();
         game.setArenaWorld(this.getServer().createWorld(new WorldCreator("arena")));
 
         getServer().getPluginManager().registerEvents(new Events(), this);

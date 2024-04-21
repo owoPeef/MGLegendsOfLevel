@@ -101,13 +101,7 @@ public class Game {
     public void joinPlayer(GamePlayer player) {
         player.loadItems();
         player.getPlayer().setResourcePack("http://chilove.pw/assets/packs/legendsoflevel.zip");
-
-        if (!Database.isUserExist(player.getPlayer(), "legendsoflevel")) {
-            player.getPlayer().teleport(LegendsOfLevelMain.spawnLocation);
-        } else {
-            player.getPlayer().teleport(player.getLastLocation());
-        }
-
+        player.getPlayer().teleport(LegendsOfLevelMain.spawnLocation);
         addPlayer(player);
     }
 
@@ -125,7 +119,6 @@ public class Game {
             for (GamePlayer acceptedPlayer: waveAcceptedList) {
                 acceptedPlayer.sendTitle("&a&lВОЛНА НАЧАЛАСЬ", "&bУбей как можно больше мобов!", 2, 4, 2);
                 acceptedPlayer.setOnWave(true);
-                acceptedPlayer.setLastLocation(acceptedPlayer.getPlayer().getLocation());
                 acceptedPlayer.getPlayer().setHealth(acceptedPlayer.getPlayer().getHealthScale());
                 acceptedPlayer.getPlayer().teleport(getRandomWaveLocation());
             }
@@ -150,7 +143,7 @@ public class Game {
             for (GamePlayer gamePlayer: getWavePlayers()) {
                 if (gamePlayer.onWave()) {
                     Player player = gamePlayer.getPlayer();
-                    player.teleport(gamePlayer.getLastLocation());
+                    player.teleport(LegendsOfLevelMain.spawnLocation);
                     for (PotionEffect effect: player.getActivePotionEffects()) {
                         player.removePotionEffect(effect.getType());
                     }

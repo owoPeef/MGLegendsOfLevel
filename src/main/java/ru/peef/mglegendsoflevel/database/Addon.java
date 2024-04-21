@@ -38,21 +38,12 @@ public class Addon {
                     String appendedItem = item.getType().name().toLowerCase() + ";";
                     items.append(appendedItem);
 
-                    Bukkit.getLogger().info("Item => " + appendedItem);
+//                    Bukkit.getLogger().info("Item => " + appendedItem);
                 }
             }
         }
 
         if (!items.isEmpty()) { Database.updateUser(player, "legendsoflevel", "items", items.toString()); }
-
-        Location location;
-        if (gamePlayer.getPlayer().getWorld().equals(LegendsOfLevelMain.getGame().getWorld())) {
-            location = gamePlayer.getPlayer().getLocation();
-        } else {
-            location = gamePlayer.getLastLocation();
-        }
-        String last_loc = Math.round(location.getX()) + "," + Math.round(location.getY()) + "," + Math.round(location.getZ()) + "," + Math.round(location.getYaw()) + "," + Math.round(location.getPitch());
-        Database.updateUser(player, "legendsoflevel", "last_location", last_loc);
     }
 
     public static GamePlayer get(Player player) {
@@ -67,15 +58,6 @@ public class Addon {
                 gamePlayer.setProgress(currentObject.get("progress").getAsInt());
                 gamePlayer.setCoins(currentObject.get("coins").getAsInt());
 
-                String[] loc_split = currentObject.get("last_location").getAsString().split(",");
-                int x = Integer.parseInt(loc_split[0]);
-                int y = Integer.parseInt(loc_split[1]);
-                int z = Integer.parseInt(loc_split[2]);
-                int yaw = Integer.parseInt(loc_split[3]);
-                int pitch = Integer.parseInt(loc_split[4]);
-                Location last_location = new Location(LegendsOfLevelMain.getGame().getWorld(), x, y, z, yaw, pitch);
-
-                gamePlayer.setLastLocation(last_location);
                 return gamePlayer;
             }
         }
