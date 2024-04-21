@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    implementation files('C:\\Users\\Anatoli\\IdeaProjects\\ChilovePlugin\\build\\libs\\ChilovePlugin-1.0.jar')
+    implementation files('C:\\Users\\Tolik\\IdeaProjects\\ChilovePlugin\\build\\libs\\ChilovePlugin-1.0.jar')
     compileOnly "org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT"
     compileOnly 'me.clip:placeholderapi:2.11.5'
     implementation group: 'io.netty', name: 'netty-buffer', version: '4.1.51.Final'
