@@ -4,6 +4,9 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import ru.peef.chilove.Utils;
@@ -36,11 +39,11 @@ public class Events implements Listener {
 
         LegendsOfLevelMain.getGame().joinPlayer(gamePlayer);
 
-        LegendsOfLevelMain.updateScoreboard(player);
-
-        Utils.setTabFormat("%legendsoflevel_full_character%");
-
-        chilovePlayer.updateTab();
+        for (ChilovePlayer chPlayer: ChilovePlayerManager.getChilovePlayers()) {
+            Utils.setTabFormat("%legendsoflevel_full_character%");
+            LegendsOfLevelMain.updateScoreboard(chPlayer.getPlayer());
+            chPlayer.updateTab();
+        }
 
         // Send damage packet
     }
@@ -78,8 +81,8 @@ public class Events implements Listener {
                 int coins = (int) (58 + Math.random() * 20);
 //                TextPacket.sendPacket(gamePlayer.getPlayer(), "&e+" + coins);
 //                gamePlayer.sendTitle("", "&6+" + coins, 2, 1, 2);
-                gamePlayer.getGame().killMob();
                 gamePlayer.getGame().spawnParticle(gamePlayer, event.getEntity());
+                gamePlayer.getArena().killMob();
                 gamePlayer.addProgress(5);
                 gamePlayer.addRewardCoins(coins);
                 gamePlayer.getPlayer().playSound(gamePlayer.getPlayer().getLocation(), SoundManager.getSound("coin"), 1, 1);
@@ -93,6 +96,11 @@ public class Events implements Listener {
         event.setDeathMessage("");
     }
 
+    @EventHandler public void onInvMoveItem(InventoryMoveItemEvent event) { event.setCancelled(true); }
+    @EventHandler public void onInvInteract(InventoryInteractEvent event) { event.setCancelled(true); }
+    @EventHandler public void onInvClick(InventoryClickEvent event) { event.setCancelled(true); }
+    @EventHandler public void onPlayerDrop(PlayerDropItemEvent event) { event.setCancelled(true); }
+
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         GamePlayer gamePlayer = LegendsOfLevelMain.getGame().getGamePlayer(event.getPlayer());
@@ -102,8 +110,12 @@ public class Events implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
         EntityDamageEvent.DamageCause cause = event.getCause();
-        if (cause.equals(EntityDamageEvent.DamageCause.FALL)) {
-            event.setCancelled(true);
+//        if (event.getEntity() instanceof Player player) player.sendMessage("Cause: " + cause.name());
+        switch (cause) {
+            case FIRE, FALL -> {
+                event.setDamage(0);
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -167,21 +179,7 @@ public class Events implements Listener {
 //        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(Utils.getString("&eНовая: " + newSlot + " &7| &eСтарая: " + prevSlot, player, player.getWorld())));
     }
 
-    @EventHandler
-    public void onEntityCombust(EntityCombustEvent event) {
-        if (!event.getEntity().getType().equals(EntityType.PLAYER)) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onWeatherChange(WeatherChangeEvent event) {
-        event.getWorld().setStorm(false);
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onPlayerFoodChange(FoodLevelChangeEvent event) {
-        event.setCancelled(true);
-    }
+    @EventHandler public void onEntityCombust(EntityCombustEvent event) { if (!event.getEntity().getType().equals(EntityType.PLAYER)) event.setCancelled(true); }
+    @EventHandler public void onWeatherChange(WeatherChangeEvent event) { event.setCancelled(true); }
+    @EventHandler public void onPlayerFoodChange(FoodLevelChangeEvent event) { event.setCancelled(true); }
 }
