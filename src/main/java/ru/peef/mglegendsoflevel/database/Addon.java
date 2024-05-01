@@ -2,14 +2,11 @@ package ru.peef.mglegendsoflevel.database;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import ru.peef.chilove.database.Database;
-import ru.peef.mglegendsoflevel.LegendsOfLevelMain;
 import ru.peef.mglegendsoflevel.game.GamePlayer;
-import ru.peef.mglegendsoflevel.game.LevelManager;
+import ru.peef.mglegendsoflevel.game.levels.LevelManager;
 
 public class Addon {
     public static void push(GamePlayer gamePlayer) {
