@@ -1,21 +1,17 @@
 package ru.peef.mglegendsoflevel;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Difficulty;
-import org.bukkit.Location;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.peef.chilove.ScoreboardManager;
 import ru.peef.chilove.Utils;
 import ru.peef.chilove.network.SocketServer;
 import ru.peef.chilove.sounds.SoundManager;
+import ru.peef.chilove.structures.BuildManager;
 import ru.peef.mglegendsoflevel.commands.LegendsOfLevelCommand;
 import ru.peef.mglegendsoflevel.database.Addon;
-import ru.peef.mglegendsoflevel.game.CharacterManager;
-import ru.peef.mglegendsoflevel.game.Game;
-import ru.peef.mglegendsoflevel.game.GamePlayer;
-import ru.peef.mglegendsoflevel.game.LevelManager;
+import ru.peef.mglegendsoflevel.game.*;
+import ru.peef.mglegendsoflevel.game.levels.LevelManager;
 import ru.peef.mglegendsoflevel.listener.Events;
 
 import java.util.*;
@@ -26,6 +22,7 @@ public final class LegendsOfLevelMain extends JavaPlugin {
     private static final String wavePrefix = "§c§l[ВОЛНЫ]";
     private static ScoreboardManager manager;
 
+    public static World world;
     public static final String PACKETS_CHANNEL = "chilove:main";
     public static Game game;
     public static Location spawnLocation;
@@ -36,6 +33,7 @@ public final class LegendsOfLevelMain extends JavaPlugin {
 
         SocketServer.init();
         SoundManager.init();
+        ArenaManager.init();
         CharacterManager.init();
 
 //        Utils.enableDebug();
@@ -46,7 +44,6 @@ public final class LegendsOfLevelMain extends JavaPlugin {
         LevelManager.loadLevels();
 
         spawnLocation = game.getWorld().getSpawnLocation();
-        game.setArenaWorld(this.getServer().createWorld(new WorldCreator("arena")));
 
         getServer().getPluginManager().registerEvents(new Events(), this);
 
@@ -69,12 +66,37 @@ public final class LegendsOfLevelMain extends JavaPlugin {
 
         manager = new ScoreboardManager("legendsoflevel", "&aLegends Of Level");
         manager.displayScoreboard();
+
+        world = getServer().getWorlds().get(0);
+
+        new Thread(() -> {
+            while (true) {
+                int d = 4;
+                // 30 0 124
+//                world.spawnParticle(Particle.CLOUD, new Location(world, 111, -48, 11), 30, 81, 48, 133, 1f);
+
+                for (int x = 34; x < 89; x += d) {
+                    for (int y = -30; y > -45; y -= d) {
+                        for (int z = 33; z < 103; z += d) {
+                            // TODO
+                            // 124 52 -28; 13 -48 161
+                            world.spawnParticle(Particle.WHITE_ASH, new Location(world, x, y, z), 15, 15, 15, 15, 0.05f);
+                        }
+                    }
+                }
+                try {
+                    Thread.sleep(700);
+                } catch (Exception ignored) {}
+            }
+        }).start();
+
+//        getLog().info(BuildManager.getBuildByName("arena1").toString());
     }
 
     public static JavaPlugin getInstance() { return getPlugin(LegendsOfLevelMain.class); }
     public static Logger getLog() { return getInstance().getLogger(); }
     public static Game getGame() { return game; }
-    public static Location getSpawnLocation() { return spawnLocation; }
+    public static World getMainWorld() { return world; }
     public static String getWavePrefix() { return wavePrefix; }
     public static ScoreboardManager getScoreboardManager() { return manager; }
     public static void updateScoreboard(Player player) { getScoreboardManager().displayPlayer(player, LegendsOfLevelMain.messages); }
@@ -84,7 +106,9 @@ public final class LegendsOfLevelMain extends JavaPlugin {
         // Push all data to database
         for (GamePlayer player: game.getPlayers()) { Addon.push(player); }
         // Remove all entities (from arena)
-        game.removeAllEntities();
+        for (Arena arena: ArenaManager.getArenas()) {
+            arena.despawn();
+        }
 
         if (SocketServer.isRunning()) {
             SocketServer.disableSocketServer();
