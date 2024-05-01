@@ -1,4 +1,4 @@
-package ru.peef.mglegendsoflevel.game;
+package ru.peef.mglegendsoflevel.game.levels;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
