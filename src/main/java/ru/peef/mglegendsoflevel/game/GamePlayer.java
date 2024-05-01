@@ -1,7 +1,5 @@
 package ru.peef.mglegendsoflevel.game;
 
-import com.google.gson.JsonArray;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -13,6 +11,8 @@ import ru.peef.chilove.database.ChilovePlayer;
 import ru.peef.chilove.database.ChilovePlayerManager;
 import ru.peef.chilove.network.SocketServer;
 import ru.peef.mglegendsoflevel.LegendsOfLevelMain;
+import ru.peef.mglegendsoflevel.game.levels.GameLevel;
+import ru.peef.mglegendsoflevel.game.levels.LevelManager;
 import ru.peef.mglegendsoflevel.network.sockets.MessageType;
 
 import java.util.List;
@@ -23,9 +23,9 @@ public class GamePlayer {
     private int coins = 0;
     private int rewardCoins = 0;
     private Player player;
-    private boolean waveAccepted = false;
     private boolean onWave = false;
     private GameCharacter character = null;
+    private Arena arena = null;
     private boolean isBeginner = false;
 
     public GamePlayer(Player player) { this.player = player; }
@@ -64,14 +64,26 @@ public class GamePlayer {
         }
     }
 
+    public void startWave() {
+        arena = ArenaManager.getFreeArena();
+        if (arena != null) {
+            arena.addPlayer(this);
+            arena.startWave();
+        }
+        else {
+            sendMessage("&cНет свободных арен!");
+        }
+    }
+
     public void death() {
         sendTitle("&c&lТы умер!", "", 3, 6, 3);
         getPlayer().teleport(LegendsOfLevelMain.spawnLocation);
         addCoins(getRewardCoins() / 2);
         setRewardCoins(0);
         setOnWave(false);
-        setWaveAccepted(false);
-        getGame().stopWave();
+        arena.removePlayer(this);
+        player.setPlayerTime(LegendsOfLevelMain.getMainWorld().getTime(), false);
+        arena.stopWave();
     }
 
     public void sendSocketMessage(MessageType type, String message) {
@@ -86,8 +98,6 @@ public class GamePlayer {
     public World getWorld() { return this.player.getWorld(); }
     public boolean onWave() { return this.onWave; }
     public void setOnWave(boolean isAccepted) { this.onWave = isAccepted; }
-    public boolean isWaveAccepted() { return this.waveAccepted; }
-    public void setWaveAccepted(boolean isAccepted) { this.waveAccepted = isAccepted; }
     public int getLevel() { return this.level; }
     public void setLevel(int level, boolean notify) {
         GameLevel gameLevel = LevelManager.getLevel(level);
@@ -190,4 +200,5 @@ public class GamePlayer {
             }
         }
     }
+    public Arena getArena() { return arena; }
 }
