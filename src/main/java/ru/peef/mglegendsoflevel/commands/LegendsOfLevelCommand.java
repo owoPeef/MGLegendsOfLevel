@@ -14,6 +14,8 @@ import ru.peef.chilove.network.SocketServer;
 import ru.peef.chilove.sounds.SoundManager;
 import ru.peef.mglegendsoflevel.LegendsOfLevelMain;
 import ru.peef.mglegendsoflevel.game.*;
+import ru.peef.mglegendsoflevel.game.levels.GameLevel;
+import ru.peef.mglegendsoflevel.game.levels.LevelManager;
 import ru.peef.mglegendsoflevel.network.packets.TextPacket;
 
 import java.util.UUID;
@@ -94,9 +96,8 @@ public class LegendsOfLevelCommand implements CommandExecutor {
             }
 
             if (args.length == 1) {
-                if (args[0].equals("test")) {
-                    gamePlayer.setWaveAccepted(true);
-                    LegendsOfLevelMain.getGame().startWave();
+                if (args[0].equals("play")) {
+                    gamePlayer.startWave();
                 }
 
                 if (args[0].equals("info")) {
@@ -111,18 +112,6 @@ public class LegendsOfLevelCommand implements CommandExecutor {
                     }
                 }
 
-                if (args[0].equals("wave")) {
-                    Game game = LegendsOfLevelMain.getGame();
-                    if (!gamePlayer.onWave()) {
-                        gamePlayer.sendMessage("&cВы не находитесь на волне!");
-                    } else if (!game.isWaveStarted()) {
-                        gamePlayer.sendMessage("&cВолна не начата!");
-                    } else {
-                        gamePlayer.sendMessage("&bУчастников: &e" + game.getWavePlayers().size()
-                        + "&b, мобов: &c" + game.getLivedMobCount() + "&b, ");
-                    }
-                }
-
                 if (args[0].equals("hp")) {
                     gamePlayer.sendMessage("&c" + Math.round(gamePlayer.getPlayer().getHealth()) + " ♥");
                 }
@@ -130,30 +119,6 @@ public class LegendsOfLevelCommand implements CommandExecutor {
                 if (args[0].equals("lvls") || args[0].equals("levels")) {
                     for (GameLevel level: LevelManager.getLevels()) {
                         gamePlayer.sendMessage("&bУровень " + level.getLevel() + " &a(необходимо опыта: &e" + Math.round(level.getXpNeed()) + "&b)");
-                    }
-                }
-            }
-
-            if (args.length == 2) {
-                if (args[0].equals("wave")) {
-                    if (LegendsOfLevelMain.getGame().isWaveCollectActive()) {
-                        if (args[1].equals("join")) {
-                            if (LegendsOfLevelMain.getGame().isPlayerAcceptedWave(player)) {
-                                player.sendMessage(Utils.getString(LegendsOfLevelMain.getWavePrefix() + " &cВы уже приняли приглашение ранее!", player, player.getWorld()));
-                            } else {
-                                gamePlayer.setWaveAccepted(true);
-                                player.sendMessage(Utils.getString(LegendsOfLevelMain.getWavePrefix() + " &aВы приняли приглашение на волну.", player, player.getWorld()));
-                            }
-                        } else if (args[1].equals("leave")) {
-                            if (LegendsOfLevelMain.getGame().isPlayerAcceptedWave(player)) {
-                                gamePlayer.setWaveAccepted(false);
-                                player.sendMessage(Utils.getString(LegendsOfLevelMain.getWavePrefix() + " &aТеперь вы не участвуете в волне.", player, player.getWorld()));
-                            } else {
-                                player.sendMessage(Utils.getString(LegendsOfLevelMain.getWavePrefix() + " &cВы итак не принимали приглашение!", player, player.getWorld()));
-                            }
-                        }
-                    } else {
-                        player.sendMessage(Utils.getString("&cСейчас не ведется набор на волну!", player, player.getWorld()));
                     }
                 }
             }
