@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import ru.peef.chilove.Utils;
 import ru.peef.chilove.database.ChilovePlayer;
 import ru.peef.chilove.database.ChilovePlayerManager;
-import ru.peef.mglegendsoflevel.game.GameLevel;
+import ru.peef.mglegendsoflevel.game.levels.GameLevel;
 import ru.peef.mglegendsoflevel.game.GamePlayer;
-import ru.peef.mglegendsoflevel.game.LevelManager;
+import ru.peef.mglegendsoflevel.game.levels.LevelManager;
 
 public class LegendsOfLevelPlaceholder extends PlaceholderExpansion {
     public LegendsOfLevelPlaceholder() {}
